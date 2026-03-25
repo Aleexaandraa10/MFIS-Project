@@ -1,9 +1,13 @@
 package ro.festival.service;
+
 import ro.festival.InitHelper;
-import ro.festival.dao.*;
 import ro.festival.dao.eventtypes.*;
 import ro.festival.model.*;
 import ro.festival.model.eventtypes.*;
+import ro.festival.dao.GlobalTalkSeatDAO;
+import ro.festival.dao.ParticipantEventDAO;
+import ro.festival.dao.TicketUnder25DAO;
+
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -754,6 +758,14 @@ public class FestivalService {
 
         System.out.println("✅ Event '" + selectedEvent.getEventName() + "' has been moved to DAY" + newDay + ".");
         auditService.logAction("An event was moved to DAY" + newDay + ".");
+    }
+
+    // ----------------------AVMF---------------------
+    public void moveEvent(Event event, int newDay) {
+        event.setDay(FestivalDay.valueOf("DAY" + newDay));
+        EventService.getInstance().updateEvent(event);
+
+        System.out.println("Moved event to DAY " + newDay);
     }
 
     // === 6. Delete a participant and their ticket ===
