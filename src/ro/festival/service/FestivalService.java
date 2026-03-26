@@ -149,7 +149,7 @@ public class FestivalService {
         }
     }
 
-    private static List<Organizer> getOrganizers() {
+    static List<Organizer> getOrganizers() {
         Organizer org1 = new Organizer("Stage Masters", "Cristian D.", List.of(
                 new Concert("Imagine Dragons Live", LocalTime.of(20, 0), LocalTime.of(22, 30), FestivalDay.DAY1, "Imagine Dragons", "Alternative Rock"),
                 new Concert("Coldplay Vibes", LocalTime.of(22, 30), LocalTime.of(0, 0), FestivalDay.DAY1, "Coldplay", "Pop Rock"),
@@ -348,6 +348,7 @@ public class FestivalService {
 
         auditService.logAction("Ticket purchased");
     }
+
 
     // === 7. Reserve a seat for a limited-capacity event ===deleteParticipantAndTicket
     public void reserveSeat_GlobalTalk(Scanner scanner) {
@@ -994,7 +995,6 @@ public class FestivalService {
 
         auditService.logAction("Low-participation event removed");
     }
-
 
 
     // === 10.  Reassign events and remove an organizer from the system ===
