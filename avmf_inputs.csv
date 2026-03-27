@@ -1,0 +1,11 @@
+branchId,targetTrue,participantExists,hasUnder25Ticket,correctAge,oldPrice,discountPercentage
+1,true,0,false,false,18,3489,131
+1,false,5,true,true,113,6966,40
+2,true,1,true,false,13,2919,141
+2,false,5,true,true,35,4914,84
+3,true,2,true,true,14,4308,9
+3,false,4,true,true,29,621,142
+4,true,3,true,true,75,0,6
+4,false,5,true,true,40,4208,5
+5,true,4,true,true,26,6883,0
+5,false,5,true,true,86,959,89

@@ -1,4 +1,5 @@
 package ro.festival.service;
+import mfis.ParticipantSanctionLogic;
 import ro.festival.InitHelper;
 import ro.festival.dao.*;
 import ro.festival.dao.eventtypes.*;
@@ -793,7 +794,9 @@ public class FestivalService {
         auditService.logAction("Participant deleted");
     }
 
+
     // === 7.  Sanction fake under-25 participant ===
+    // METODA ORIGINALA
     public void sanctionFakeUnder25Claim(Scanner scanner) {
         System.out.print("Enter the ticket code of the suspected participant: ");
         String ticketCode = scanner.nextLine().trim();
@@ -853,6 +856,90 @@ public class FestivalService {
         auditService.logAction("Participant sanctioned");
     }
 
+    //    public void sanctionFakeUnder25Claim(Scanner scanner) {
+//        System.out.print("Enter the ticket code of the suspected participant: ");
+//        String ticketCode = scanner.nextLine().trim();
+//
+//        Participant participant = ParticipantService.getInstance().findByTicketCode(ticketCode);
+//        boolean participantExists = participant != null;
+//
+//        if (!participantExists) {
+//            System.out.println("No participant found with this ticket.");
+//            return;
+//        }
+//
+//        boolean hasUnder25Ticket = participant.getTicket() instanceof TicketUnder25;
+//
+//        if (!hasUnder25Ticket) {
+//            System.out.println("This ticket is not under the discount category. No action needed.");
+//            return;
+//        }
+//
+//        System.out.println("Participant " + participant.getParticipantName() +
+//                " was found to have falsely declared their age (" + participant.getAge() + ").");
+//
+//        int correctAge;
+//        while (true) {
+//            System.out.print("Enter the correct age: ");
+//            try {
+//                correctAge = Integer.parseInt(scanner.nextLine().trim());
+//                if (correctAge <= 25) {
+//                    System.out.println("The age must be over 25 to apply this correction.");
+//                    continue;
+//                }
+//                break;
+//            } catch (NumberFormatException e) {
+//                System.out.println("Invalid number. Please try again.");
+//            }
+//        }
+//
+//        Ticket oldTicket = participant.getTicket();
+//        double oldPrice = oldTicket.getPrice();
+//        double discount = ((TicketUnder25) oldTicket).getDiscountPercentage();
+//
+//        // Apelăm classifySanctionCase o singură dată, cu toți parametrii
+//        int caseType = ParticipantSanctionLogic.classifySanctionCase(
+//                participantExists,
+//                hasUnder25Ticket,
+//                correctAge,
+//                oldPrice,
+//                discount
+//        );
+//
+//        // Dacă nu e case 5, afișăm eroarea corespunzătoare
+//        if (caseType != 5) {
+//            switch (caseType) {
+//                case 3:
+//                    System.out.println("Invalid old ticket price.");
+//                    break;
+//                case 4:
+//                    System.out.println("Invalid discount percentage.");
+//                    break;
+//                default:
+//                    System.out.println("Sanction cannot be applied.");
+//            }
+//            return;
+//        }
+//
+//
+//
+//        TicketUnder25DAO.getInstance().delete(ticketCode);
+//
+//        participant.setAge(correctAge);
+//        ParticipantService.getInstance().updateParticipant(participant);
+//
+//        double newPrice = Math.round(oldPrice / (1 - discount / 100.0) * 100.0) / 100.0;
+//
+//        oldTicket.setPrice(newPrice);
+//        TicketService.getInstance().updateTicket(oldTicket);
+//
+//        System.out.println("\nSanction applied.");
+//        System.out.println("• Participant name: " + participant.getParticipantName());
+//        System.out.println("• Corrected age: " + correctAge);
+//        System.out.println("• New ticket price (no discount): " + newPrice + " RON");
+//
+//        auditService.logAction("Participant sanctioned");
+//    }
 
     // === 8.  Swap events between two organizers ===
     public void swapEventsBetweenOrganizers(Scanner scanner) {

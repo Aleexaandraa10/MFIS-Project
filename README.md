@@ -61,7 +61,7 @@ Proiect_PAO/
 
 > If you want to reset the database (drop and recreate all tables), go to **Menu Option 3 → Database Tools**, then select **Option 2: "Reset database (drop + setup)"**.  
 > This will automatically reinsert a complete set of demo data (participants, events, tickets, etc.) via the `FestivalService.initDemoData()` method.  
-> These predefined entries are required in order to fully test features such as:
+> These predefined entries are required in order to fully mfis.test features such as:
 > - GlobalTalk seat reservation (requires existing GlobalTalk events and participants)
 > - FunZone tournament (requires multiple participants and events)
 > - Statistics and audit logs (require previous activity in the system)
