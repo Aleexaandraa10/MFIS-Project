@@ -44,46 +44,70 @@ public class MoveEventLogicTest {
                     actualResult
             );
 
-            // Verificarea 2 — ramura corecta a fost acoperita
+            // Verificarea 2 — ramura corectă a fost acoperită
             switch (branchId) {
-                case 1:
-                    if (targetTrue)
-                        assertEquals("Branch 1T trebuie să returneze 1",
-                                1, actualResult);
-                    else
-                        assertTrue("Branch 1F trebuie să treacă de ramura 1",
-                                actualResult != 1);
+                case 11:
+                    if (targetTrue) {
+                        assertEquals("Branch 11T trebuie să returneze 1", 1, actualResult);
+                    } else {
+                        assertTrue("Branch 11F trebuie să treacă de validarea dayEvent < 1",
+                                dayEvent >= 1);
+                    }
                     break;
+
+                case 12:
+                    if (targetTrue) {
+                        assertEquals("Branch 12T trebuie să returneze 1", 1, actualResult);
+                    } else {
+                        assertTrue("Branch 12F trebuie să treacă de validarea dayEvent > 3",
+                                dayEvent <= 3);
+                    }
+                    break;
+
                 case 2:
-                    if (targetTrue)
-                        assertEquals("Branch 2T trebuie să returneze 2",
-                                2, actualResult);
-                    else
+                    if (targetTrue) {
+                        assertEquals("Branch 2T trebuie să returneze 2", 2, actualResult);
+                    } else {
                         assertTrue("Branch 2F trebuie să treacă de ramura 2",
                                 actualResult != 1 && actualResult != 2);
+                    }
                     break;
-                case 3:
-                    if (targetTrue)
-                        assertEquals("Branch 3T trebuie să returneze 3",
-                                3, actualResult);
-                    else
-                        assertTrue("Branch 3F trebuie să treacă de ramura 3",
-                                actualResult != 1 && actualResult != 2 && actualResult != 3);
+
+                case 31:
+                    if (targetTrue) {
+                        assertEquals("Branch 31T trebuie să returneze 3", 3, actualResult);
+                    } else {
+                        assertTrue("Branch 31F trebuie să treacă de validarea newDay < 1",
+                                newDay >= 1);
+                    }
                     break;
+
+                case 32:
+                    if (targetTrue) {
+                        assertEquals("Branch 32T trebuie să returneze 3", 3, actualResult);
+                    } else {
+                        assertTrue("Branch 32F trebuie să treacă de validarea newDay > 3",
+                                newDay <= 3);
+                    }
+                    break;
+
                 case 4:
-                    if (targetTrue)
-                        assertEquals("Branch 4T trebuie să returneze 4",
-                                4, actualResult);
-                    else
-                        assertEquals("Branch 4F trebuie să returneze 0",
-                                0, actualResult);
+                    if (targetTrue) {
+                        assertEquals("Branch 4T trebuie să returneze 4", 4, actualResult);
+                    } else {
+                        assertEquals("Branch 4F trebuie să returneze 0", 0, actualResult);
+                    }
                     break;
+
                 case 5:
-                    assertEquals("Branch 5 trebuie să returneze 0",
-                            0, actualResult);
+                    assertEquals("Branch 5 trebuie să returneze 0", 0, actualResult);
                     break;
+
+                default:
+                    throw new AssertionError("Branch necunoscut în CSV: " + branchId);
             }
         }
+
         reader.close();
     }
 }

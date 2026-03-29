@@ -18,7 +18,7 @@ public class MoveEventTestable {
 
 // Branch 11 — dayEvent < 1
 // Branch 12 — dayEvent > 3
-// Branch 2  — eventIndex < 0  (rămâne la fel)
+// Branch 2  — eventIndex < 0
 // Branch 31 — newDay < 1
 // Branch 32 — newDay > 3
 // Branch 4  — newDay == dayEvent
