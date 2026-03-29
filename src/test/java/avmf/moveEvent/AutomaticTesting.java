@@ -10,13 +10,17 @@ public class AutomaticTesting {
                 "src/test/java/avmf/moveEvent/generated_tests.txt", false
         ).close();
 
-        // 1. Ruleaza generatorul AVMF
+        // ruleaza generatorul AVMF
         System.out.println("Running AVMF generator...");
-        for (int i = 0; i <= 4; i++) {
-            AVMFMoveEventGenerator.generate(i);
-        }
+        AVMFMoveEventGenerator.generate(11);
+        AVMFMoveEventGenerator.generate(12);
+        AVMFMoveEventGenerator.generate(2);
+        AVMFMoveEventGenerator.generate(31);
+        AVMFMoveEventGenerator.generate(32);
+        AVMFMoveEventGenerator.generate(4);
+        AVMFMoveEventGenerator.generate(0);
 
-        // 2. Genereaza testele JUnit
+        // genereaza testele JUnit
         System.out.println("Generating JUnit tests...");
 
         BufferedReader br = new BufferedReader(new FileReader(
@@ -45,7 +49,16 @@ public class AutomaticTesting {
 
             sb.append("    @Test\n");
             sb.append("    void test_" + testId + "() {\n");
-            sb.append("        assertEquals(" + branch +
+
+            int expected;
+
+            if (branch == 11 || branch == 12) expected = 1;
+            else if (branch == 2) expected = 2;
+            else if (branch == 31 || branch == 32) expected = 3;
+            else if (branch == 4) expected = 4;
+            else expected = 0;
+
+            sb.append("        assertEquals(" + expected +
                     ", MoveEventTestable.moveEventTestable(" +
                     day + ", " + index + ", " + newDay + "));\n");
             sb.append("    }\n\n");

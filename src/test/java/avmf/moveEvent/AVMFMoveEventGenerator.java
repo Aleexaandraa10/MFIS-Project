@@ -66,12 +66,38 @@ public class AVMFMoveEventGenerator {
 
             int result = MoveEventTestable.moveEventTestable(day, index, newDay);
 
-            if (result == targetBranch) {
+            int expected;
 
-                System.out.println("✅ FOUND input for branch " + targetBranch);
-                System.out.println("day=" + day +
-                        ", index=" + index +
-                        ", newDay=" + newDay);
+            if (targetBranch == 11 || targetBranch == 12) expected = 1;
+            else if (targetBranch == 2) expected = 2;
+            else if (targetBranch == 31 || targetBranch == 32) expected = 3;
+            else if (targetBranch == 4) expected = 4;
+            else expected = 0;
+
+            if (result == expected) {
+
+                System.out.println("\n--- Branch " + targetBranch + " ---");
+
+                if (targetBranch == 11)
+                    System.out.println("Target: dayEvent < 1 = true → zi eveniment prea mica");
+                else if (targetBranch == 12)
+                    System.out.println("Target: dayEvent > 3 = true → zi eveniment prea mare");
+                else if (targetBranch == 2)
+                    System.out.println("Target: eventIndex < 0 = true → index invalid");
+                else if (targetBranch == 31)
+                    System.out.println("Target: newDay < 1 = true → zi noua prea mica");
+                else if (targetBranch == 32)
+                    System.out.println("Target: newDay > 3 = true → zi noua prea mare");
+                else if (targetBranch == 4)
+                    System.out.println("Target: newDay == dayEvent = true → aceeasi zi");
+                else if (targetBranch == 0)
+                    System.out.println("Target: toate conditiile false → caz valid");
+
+                System.out.println("Best solution: [" +
+                        day + ", " + index + ", " + newDay + "]");
+
+                System.out.println("Number of objective function evaluations: "
+                        + monitor.getNumEvaluations());
 
                 // scriere in fisier
                 try (FileWriter fw = new FileWriter(
@@ -87,7 +113,7 @@ public class AVMFMoveEventGenerator {
         }
 
         if (!found) {
-            System.out.println("❌ FAILED for branch " + targetBranch);
+            System.out.println(" FAILED for branch " + targetBranch);
         }
     }
 
@@ -103,62 +129,91 @@ public class AVMFMoveEventGenerator {
 
                 double fitness = 0;
 
-                // ---- BRANCH 1 ----
-                if (targetBranch == 1) {
-                    if (day >= 1 && day <= 3)
-                        fitness += 10;
+                // ---- BRANCH 11: day < 1 ----
+                if (targetBranch == 11) {
+                    fitness += Math.max(0, day);
                 }
 
-                // ---- BRANCH 2 ----
+                // ---- BRANCH 12: day > 3 ----
+                if (targetBranch == 12) {
+                    fitness += Math.max(0, 3 - day);
+                }
+
+                // ---- BRANCH 2: index < 0 ----
                 if (targetBranch == 2) {
 
-                    // evit 1
-                    if (day < 1 || day > 3) fitness += 1000;
-
-
-                    // target
-                    if (index >= 0)
-                        fitness += index + 1;
-                }
-
-                // ---- BRANCH 3 ----
-                if (targetBranch == 3) {
-
-                    // evit 1
-                    if (day < 1 || day > 3) fitness += 1000;
-
-                    // evit 2
-                    if (index < 0) fitness += 1000;
+                    // evit branch 1 (day valid)
+                    fitness += Math.max(0, 1 - day);
+                    fitness += Math.max(0, day - 3);
 
                     // target
-                    if (newDay >= 1 && newDay <= 3)
-                        fitness += 10;
+                    fitness += Math.max(0, index);
                 }
 
-                // ---- BRANCH 4 ----
+                // ---- BRANCH 31: newDay < 1 ----
+                if (targetBranch == 31) {
+
+                    fitness += Math.max(0, 1 - day);
+                    fitness += Math.max(0, day - 3);
+
+                    fitness += Math.max(0, -index);
+
+                    // target: newDay < 1
+                    fitness += Math.max(0, newDay);
+
+                    // evit cealalta ramura
+                    fitness += Math.max(0, newDay - 3);
+                }
+
+                // ---- BRANCH 32: newDay > 3 ----
+                if (targetBranch == 32) {
+
+                    fitness += Math.max(0, 1 - day);
+                    fitness += Math.max(0, day - 3);
+
+                    fitness += Math.max(0, -index);
+
+                    // target: newDay > 3
+                    fitness += Math.max(0, 4 - newDay);
+
+                    // evit cealalta ramura
+                    fitness += Math.max(0, 1 - newDay);
+                }
+
+                // ---- BRANCH 4: newDay == day ----
                 if (targetBranch == 4) {
 
                     // evit 1
-                    if (day < 1 || day > 3) fitness += 1000;
+                    fitness += Math.max(0, 1 - day);
+                    fitness += Math.max(0, day - 3);
 
                     // evit 2
-                    if (index < 0) fitness += 1000;
+                    fitness += Math.max(0, -index);
 
                     // evit 3
-                    if (newDay < 1 || newDay > 3) fitness += 1000;
+                    fitness += Math.max(0, 1 - newDay);
+                    fitness += Math.max(0, newDay - 3);
 
                     // target
                     fitness += Math.abs(newDay - day);
                 }
 
-                // ---- BRANCH 0 ----
+                // ---- BRANCH 0: toate false ----
                 if (targetBranch == 0) {
 
-                    // evit toate
-                    if (day < 1 || day > 3) fitness += 1000;
-                    if (index < 0) fitness += 1000;
-                    if (newDay < 1 || newDay > 3) fitness += 1000;
-                    if (newDay == day) fitness += 1000;
+                    // day valid
+                    fitness += Math.max(0, 1 - day);
+                    fitness += Math.max(0, day - 3);
+
+                    // index >= 0
+                    fitness += Math.max(0, -index);
+
+                    // newDay valid
+                    fitness += Math.max(0, 1 - newDay);
+                    fitness += Math.max(0, newDay - 3);
+
+                    // newDay != day
+                    fitness += (newDay == day) ? 1 : 0;
                 }
 
                 return NumericObjectiveValue.higherIsBetterObjectiveValue(-fitness);

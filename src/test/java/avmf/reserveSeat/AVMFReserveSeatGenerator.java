@@ -87,32 +87,22 @@ public class AVMFReserveSeatGenerator {
 
             boolean ok = false;
 
-            // branch normal
-            if (result == targetBranch) {
-                ok = true;
-            }
+            if (result == targetBranch) ok = true;
 
-            // pseudo-branch: index < 0
-            if (targetBranch == 21 && result == 2 && i < 0) {
-                ok = true;
-            }
-
-            // pseudo-branch: index > talksSize - 1
-            if (targetBranch == 22 && result == 2 && i > t - 1) {
-                ok = true;
-            }
+            if (targetBranch == 21 && result == 2 && i < 0) ok = true;
+            if (targetBranch == 22 && result == 2 && i >= t) ok = true;
 
             if (ok) {
-                found = true;
-                System.out.println("\n✅ FOUND input for branch " + targetBranch);
 
-                System.out.println(
-                        "talks=" + t +
-                                ", index=" + i +
-                                ", reserved=" + r +
-                                ", seats=" + s +
-                                ", exists=" + (e == 1)
-                );
+                System.out.println("\n--- Branch " + targetBranch + " ---");
+
+                printTarget(targetBranch);
+
+                System.out.printf("Best solution: [%d, %d, %d, %d, %b]\n",
+                        t, i, r, s, (e == 1));
+
+                System.out.println("Number of objective function evaluations: "
+                        + monitor.getNumEvaluations());
 
                 try (FileWriter fw = new FileWriter(
                         "src/test/java/avmf/reserveSeat/generated_tests.txt", true)) {
@@ -123,12 +113,37 @@ public class AVMFReserveSeatGenerator {
                     ex.printStackTrace();
                 }
 
+                found = true;
                 break;
             }
         }
 
         if (!found) {
-            System.out.println("\n❌ FAILED for branch " + targetBranch);
+            System.out.println("\n FAILED for branch " + targetBranch);
+        }
+    }
+
+    // ================= PRINT TARGET =================
+
+    static void printTarget(int targetBranch) {
+        switch (targetBranch) {
+            case 1 ->
+                    System.out.println("Target: talksSize == 0 → nu exista talk-uri");
+
+            case 21 ->
+                    System.out.println("Target: index < 0 → index negativ");
+
+            case 22 ->
+                    System.out.println("Target: index >= talksSize → index prea mare");
+
+            case 3 ->
+                    System.out.println("Target: reservedSize >= seats → locuri ocupate complet");
+
+            case 4 ->
+                    System.out.println("Target: participantExists == false → participant inexistent");
+
+            case 0 ->
+                    System.out.println("Target: toate condițiile false → rezervare valida");
         }
     }
 
@@ -149,29 +164,28 @@ public class AVMFReserveSeatGenerator {
 
                 double fitness = 0;
 
-                // -------- BRANCH 1: talksSize == 0 --------
+                // -------- BRANCH 1 --------
                 if (targetBranch == 1) {
                     fitness += Math.abs(talksSize);
                 }
 
-                // -------- BRANCH 2: invalid index --------
+                // -------- BRANCH 21 --------
                 if (targetBranch == 21) {
 
                     fitness += Math.max(0, 1 - talksSize);
 
-                    // vrem index < 0
                     fitness += Math.max(0, index);
                 }
 
+                // -------- BRANCH 22 --------
                 if (targetBranch == 22) {
 
                     fitness += Math.max(0, 1 - talksSize);
 
-                    // vrem index > talksSize - 1
-                    fitness += Math.max(0, (talksSize - 1) - index + 1);
+                    fitness += Math.max(0, talksSize - index);
                 }
 
-                // -------- BRANCH 3: reserved >= seats --------
+                // -------- BRANCH 3 --------
                 if (targetBranch == 3) {
 
                     fitness += Math.max(0, 1 - talksSize);
@@ -182,7 +196,7 @@ public class AVMFReserveSeatGenerator {
                     fitness += Math.max(0, seats - reserved);
                 }
 
-                // -------- BRANCH 4: exists == false --------
+                // -------- BRANCH 4 --------
                 if (targetBranch == 4) {
 
                     fitness += Math.max(0, 1 - talksSize);
@@ -190,12 +204,12 @@ public class AVMFReserveSeatGenerator {
                     fitness += Math.max(0, -index);
                     fitness += Math.max(0, index - (talksSize - 1));
 
-                    fitness += Math.max(0, reserved - seats);
+                    fitness += Math.max(0, reserved - seats + 1);
 
                     fitness += exists;
                 }
 
-                // -------- BRANCH 0: succes --------
+                // -------- BRANCH 0 --------
                 if (targetBranch == 0) {
 
                     fitness += Math.max(0, 1 - talksSize);
@@ -203,7 +217,7 @@ public class AVMFReserveSeatGenerator {
                     fitness += Math.max(0, -index);
                     fitness += Math.max(0, index - (talksSize - 1));
 
-                    fitness += Math.max(0, reserved - seats);
+                    fitness += Math.max(0, reserved - seats + 1);
 
                     fitness += Math.max(0, 1 - exists);
                 }

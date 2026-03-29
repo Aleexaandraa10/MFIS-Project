@@ -12,7 +12,7 @@ public class AutomaticTesting {
                 "src/test/java/avmf/reserveSeat/generated_tests.txt", false
         ).close();
 
-        // 1. Ruleaza generatorul AVMF
+        // ruleaza generatorul AVMF
         System.out.println("Running AVMF generator...");
         int[] branches = {1, 21, 22, 3, 4, 0};
 
@@ -20,7 +20,7 @@ public class AutomaticTesting {
             AVMFReserveSeatGenerator.generate(b);
         }
 
-        // 2. Genereaza testele JUnit
+        // genereaza testele JUnit
         System.out.println("Generating JUnit tests...");
 
         BufferedReader br = new BufferedReader(new FileReader(
@@ -63,7 +63,7 @@ public class AutomaticTesting {
 
         br.close();
 
-        // 4. Scrie fisierul JUnit
+        // scrie fisierul JUnit
         FileWriter fw = new FileWriter(
                 "src/test/java/avmf/reserveSeat/ReserveSeatGeneratedTests.java");
 

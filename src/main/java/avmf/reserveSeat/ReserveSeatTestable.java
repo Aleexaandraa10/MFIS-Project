@@ -14,10 +14,10 @@ public class ReserveSeatTestable {
         if (talksSize == 0) return 1;
 
         // invalid index
-        if (index < 0 || index > talksSize - 1) return 2;
+        if (index < 0 || index >= talksSize) return 2;
 
         // full
-        if (reservedSize > seats - 1) return 3;
+        if (reservedSize >= seats) return 3;
 
         // participant not found
         if (!participantExists) return 4;
